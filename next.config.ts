@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Stylus configuration will be added back once Turbopack compatibility is resolved
 };
 
 export default nextConfig;
