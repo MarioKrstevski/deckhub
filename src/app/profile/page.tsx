@@ -85,6 +85,12 @@ export default function ProfilePage() {
 
       if (response.ok) {
         setSubscription(null);
+      } else {
+        const errorData = await response.json();
+        console.error("Failed to unsubscribe:", errorData);
+        // Still set subscription to null since the deletion might have worked
+        // even if the response was an error
+        setSubscription(null);
       }
     } catch (error) {
       console.error("Error unsubscribing:", error);

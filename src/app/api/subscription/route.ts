@@ -98,6 +98,8 @@ export async function DELETE(request: Request) {
     const { searchParams } = new URL(request.url);
     const subscriptionId = searchParams.get("subscriptionId");
 
+    console.log("DELETE request for subscriptionId:", subscriptionId);
+
     if (!subscriptionId) {
       return NextResponse.json(
         { error: "subscriptionId parameter required" },
@@ -105,17 +107,40 @@ export async function DELETE(request: Request) {
       );
     }
 
+    // Check if subscription exists first
+    const existingSubscription = await prisma.subscription.findUnique(
+      {
+        where: { id: subscriptionId },
+      }
+    );
+
+    console.log("Existing subscription:", existingSubscription);
+
+    if (!existingSubscription) {
+      console.log("Subscription not found, returning 404");
+      return NextResponse.json(
+        { error: "Subscription not found" },
+        { status: 404 }
+      );
+    }
+
+    console.log("Deleting subscription...");
     await prisma.subscription.delete({
       where: {
         id: subscriptionId,
       },
     });
 
+    console.log("Subscription deleted successfully");
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error deleting subscription:", error);
     return NextResponse.json(
-      { error: "Failed to delete subscription" },
+      {
+        error: `Failed to delete subscription: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`,
+      },
       { status: 500 }
     );
   }
