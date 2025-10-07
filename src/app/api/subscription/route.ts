@@ -16,7 +16,7 @@ export async function POST(request: Request) {
       await prisma.user.create({
         data: {
           id: userId,
-          email: "user@example.com", // We'll get this from Supabase later
+          email: `${userId}@temp.local`, // Temporary email until we get real one from Supabase
           name: "User",
         },
       });
