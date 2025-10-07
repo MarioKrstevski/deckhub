@@ -8,11 +8,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-generator seed {
-  provider = "tsx"
-  output   = "./seed.ts"
-}
-
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
