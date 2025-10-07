@@ -6,11 +6,13 @@ A modern Next.js project built with TypeScript, featuring a comprehensive tech s
 
 - **Framework**: Next.js 15 with App Router
 - **Language**: TypeScript
-- **Styling**: Tailwind CSS + Stylus (hybrid approach)
+- **Styling**: Tailwind CSS
 - **UI Components**: Shadcn UI + Radix UI
 - **State Management**: Zustand
 - **Forms**: React Hook Form + Zod validation
 - **URL State**: nuqs
+- **Authentication**: Supabase Auth
+- **Database**: Supabase (PostgreSQL) + Prisma ORM
 - **Code Quality**: ESLint + Standard.js rules
 
 ## 🛠️ Getting Started
@@ -35,13 +37,34 @@ cd deckhub
 npm install
 ```
 
-3. Run the development server:
+3. Set up environment variables:
+
+Create a `.env.local` file in the root directory with the following variables:
+
+```bash
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+
+# Database Configuration (for Prisma)
+DATABASE_URL=your_supabase_database_url
+DIRECT_URL=your_supabase_direct_url
+```
+
+4. Set up the database:
+
+```bash
+npm run db:generate
+npm run db:push
+```
+
+5. Run the development server:
 
 ```bash
 npm run dev
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser.
+6. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## 📁 Project Structure
 
@@ -66,34 +89,20 @@ src/
 
 ## 🎨 Styling Approach
 
-This project uses a hybrid approach combining Tailwind CSS and Stylus:
+This project uses Tailwind CSS for styling:
 
 - **Tailwind CSS**: For utility classes, spacing, layout, and rapid prototyping
-- **Stylus Modules**: For complex, component-specific styles with variables and mixins
 - **Design System**: CSS custom properties for consistent theming
+- **Shadcn UI**: Pre-built components with consistent design patterns
 
-### Example Stylus Usage
-
-```stylus
-// ComponentName.module.styl
-.container
-  primary-color = #3b82f6
-
-  background: linear-gradient(135deg, primary-color 0%, #64748b 100%)
-  border-radius: 12px
-
-  &:hover
-    transform: translateY(-2px)
-```
+### Example Usage
 
 ```tsx
 // ComponentName.tsx
-import styles from "./ComponentName.module.styl";
-
 export function ComponentName() {
   return (
-    <div className={`${styles.container} p-4`}>
-      {/* Tailwind utilities + Stylus styles */}
+    <div className="bg-gradient-to-r from-blue-500 to-purple-500 p-4 rounded-lg hover:shadow-lg transition-shadow">
+      {/* Tailwind utilities for styling */}
     </div>
   );
 }
@@ -153,6 +162,10 @@ This project follows Standard.js rules:
 - `npm run build` - Build for production
 - `npm run start` - Start production server
 - `npm run lint` - Run ESLint
+- `npm run db:generate` - Generate Prisma client
+- `npm run db:push` - Push schema to database
+- `npm run db:migrate` - Run database migrations
+- `npm run db:studio` - Open Prisma Studio
 
 ## 🎯 Best Practices
 

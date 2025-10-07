@@ -8,6 +8,11 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator seed {
+  provider = "tsx"
+  output   = "./seed.ts"
+}
+
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
@@ -15,11 +20,44 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String        @id @default(cuid())
+  email        String        @unique
+  name         String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  subscription Subscription?
 
   @@map("users")
+}
+
+model Subscription {
+  id        String    @id @default(cuid())
+  userId    String    @unique
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  isActive  Boolean   @default(false)
+  plan      String    @default("free") // free, pro, premium
+  startDate DateTime  @default(now())
+  endDate   DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("subscriptions")
+}
+
+model Deck {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  cards       Int      @default(0)
+  downloads   Int      @default(0)
+  category    String
+  author      String
+  rating      Float    @default(0.0)
+  tags        String[] @default([])
+  color       String   @default("from-blue-500 to-blue-600")
+  isPublic    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("decks")
 }

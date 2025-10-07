@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -10,147 +11,141 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-// Sample deck data (in a real app, this would come from an API)
 interface DeckData {
-  id: number;
+  id: string;
   title: string;
   description: string;
   cards: number;
   downloads: number;
-  lastModified: string;
-  color: string;
   category: string;
   author: string;
   rating: number;
   tags: string[];
-  sampleCards: Array<{
-    front: string;
-    back: string;
-  }>;
+  color: string;
+  isPublic: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
-const deckData: Record<number, DeckData> = {
-  1: {
-    id: 1,
-    title: "Anatomy & Physiology - Cardiovascular System",
-    description:
-      "Comprehensive flashcards covering heart anatomy, blood vessels, and cardiovascular physiology for medical students",
-    cards: 247,
-    downloads: 1250,
-    lastModified: "2 hours ago",
-    color: "from-blue-500 to-blue-600",
-    category: "Medical",
-    author: "Dr. Sarah Johnson",
-    rating: 4.8,
-    tags: ["anatomy", "physiology", "cardiovascular", "medical"],
-    sampleCards: [
-      {
-        front: "What is the normal heart rate range for adults?",
-        back: "60-100 beats per minute (bpm)",
-      },
-      {
-        front: "Which chamber of the heart pumps blood to the lungs?",
-        back: "Right ventricle",
-      },
-      {
-        front: "What is the function of the SA node?",
-        back: "Acts as the natural pacemaker of the heart, initiating electrical impulses",
-      },
-    ],
-  },
-  2: {
-    id: 2,
-    title: "Spanish Vocabulary - Intermediate Level",
-    description:
-      "Essential Spanish vocabulary with audio pronunciation and example sentences for intermediate learners",
-    cards: 180,
-    downloads: 890,
-    lastModified: "1 day ago",
-    color: "from-purple-500 to-purple-600",
-    category: "Spanish",
-    author: "María González",
-    rating: 4.6,
-    tags: ["spanish", "vocabulary", "intermediate", "language"],
-    sampleCards: [
-      {
-        front: "How do you say 'thank you' in Spanish?",
-        back: "Gracias",
-      },
-      {
-        front: "What does '¿Cómo estás?' mean?",
-        back: "How are you?",
-      },
-      {
-        front: "Translate: 'I am hungry'",
-        back: "Tengo hambre",
-      },
-    ],
-  },
-  3: {
-    id: 3,
-    title: "Pathology - Infectious Diseases",
-    description:
-      "Detailed flashcards on bacterial, viral, and fungal infections with treatment protocols and diagnostic criteria",
-    cards: 156,
-    downloads: 2100,
-    lastModified: "3 days ago",
-    color: "from-green-500 to-green-600",
-    category: "Medical",
-    author: "Dr. Michael Chen",
-    rating: 4.9,
-    tags: [
-      "pathology",
-      "infectious diseases",
-      "medical",
-      "diagnosis",
-    ],
-    sampleCards: [
-      {
-        front:
-          "What is the most common cause of bacterial pneumonia?",
-        back: "Streptococcus pneumoniae",
-      },
-      {
-        front: "Which virus causes chickenpox?",
-        back: "Varicella-zoster virus (VZV)",
-      },
-      {
-        front: "What is the treatment for MRSA?",
-        back: "Vancomycin or daptomycin",
-      },
-    ],
-  },
+interface SampleCard {
+  front: string;
+  back: string;
+}
+
+// Sample cards data for different deck types
+const sampleCardsData: Record<string, SampleCard[]> = {
+  medical: [
+    {
+      front: "What is the normal heart rate range for adults?",
+      back: "60-100 beats per minute (bpm)",
+    },
+    {
+      front: "Which chamber of the heart pumps blood to the lungs?",
+      back: "Right ventricle",
+    },
+    {
+      front: "What is the function of the SA node?",
+      back: "Acts as the natural pacemaker of the heart, initiating electrical impulses",
+    },
+  ],
+  spanish: [
+    {
+      front: "How do you say &apos;hello&apos; in Spanish?",
+      back: "Hola",
+    },
+    {
+      front: "What does &apos;gracias&apos; mean?",
+      back: "Thank you",
+    },
+    {
+      front: "How do you say &apos;goodbye&apos; in Spanish?",
+      back: "Adiós",
+    },
+  ],
+  default: [
+    {
+      front: "Sample question?",
+      back: "Sample answer",
+    },
+    {
+      front: "Another question?",
+      back: "Another answer",
+    },
+  ],
 };
 
 export default function DeckDetailPage() {
   const params = useParams();
-  const deckId = parseInt(params.id as string);
-  const deck = deckData[deckId];
+  const [deck, setDeck] = useState<DeckData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  if (!deck) {
+  useEffect(() => {
+    const fetchDeck = async () => {
+      try {
+        const response = await fetch(`/api/decks/${params.id}`);
+        if (response.ok) {
+          const data = await response.json();
+          setDeck(data);
+        } else if (response.status === 404) {
+          setError("Deck not found");
+        } else {
+          setError("Failed to fetch deck");
+        }
+      } catch (error) {
+        console.error("Error fetching deck:", error);
+        setError("Failed to fetch deck");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (params.id) {
+      fetchDeck();
+    }
+  }, [params.id]);
+
+  if (loading) {
     return (
       <div
         className="min-h-screen flex items-center justify-center"
         style={{ backgroundColor: "var(--bg1)" }}
       >
-        <Card className="w-full max-w-md bg-white/10 backdrop-blur-sm border-white/20">
-          <CardContent className="p-8 text-center">
-            <h1 className="text-2xl font-bold text-white mb-4">
-              Deck Not Found
-            </h1>
-            <p className="text-gray-300 mb-6">
-              The deck you&apos;re looking for doesn&apos;t exist.
-            </p>
-            <Link href="/dashboard">
-              <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600">
-                Back to Dashboard
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
+        <div className="text-white text-xl">Loading deck...</div>
       </div>
     );
   }
+
+  if (error || !deck) {
+    return (
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{ backgroundColor: "var(--bg1)" }}
+      >
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-white mb-4">
+            Deck Not Found
+          </h1>
+          <p className="text-gray-300 mb-8">
+            The deck you&apos;re looking for doesn&apos;t exist.
+          </p>
+          <Link href="/dashboard">
+            <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600">
+              Back to Dashboard
+            </Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  // Get sample cards based on deck category or use default
+  const getSampleCards = (category: string): SampleCard[] => {
+    const categoryKey = category.toLowerCase();
+    return sampleCardsData[categoryKey] || sampleCardsData.default;
+  };
+
+  const sampleCards = getSampleCards(deck.category);
 
   return (
     <div
@@ -165,90 +160,48 @@ export default function DeckDetailPage() {
               DeckHub
             </span>
           </div>
-          <div className="flex gap-4">
-            <Link href="/dashboard">
-              <Button
-                variant="outline"
-                className="text-white border-white/20 hover:bg-white/10"
-              >
-                ← Back to Dashboard
-              </Button>
-            </Link>
-          </div>
+          <Link href="/dashboard">
+            <Button
+              variant="outline"
+              className="text-white border-white/20 hover:bg-white/10"
+            >
+              ← Back to Dashboard
+            </Button>
+          </Link>
         </nav>
 
         {/* Deck Header */}
         <div className="mb-8">
-          <div className="flex items-start gap-6">
-            <div
-              className={`w-32 h-32 bg-gradient-to-br ${deck.color} rounded-lg flex items-center justify-center flex-shrink-0`}
-            >
-              <span className="text-6xl text-white">📚</span>
-            </div>
-            <div className="flex-1">
-              <div className="flex items-center gap-3 mb-2">
-                <span className="bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full text-sm">
-                  {deck.category}
-                </span>
-                <div className="flex items-center gap-1">
-                  <span className="text-yellow-400">⭐</span>
-                  <span className="text-white font-medium">
-                    {deck.rating}
-                  </span>
-                </div>
-              </div>
-              <h1 className="text-4xl font-bold text-white mb-3">
-                {deck.title}
-              </h1>
-              <p className="text-gray-300 text-lg mb-4">
-                {deck.description}
-              </p>
-              <div className="flex items-center gap-6 text-gray-400">
-                <span>By {deck.author}</span>
-                <span>{deck.cards} cards</span>
-                <span>
-                  {deck.downloads.toLocaleString()} downloads
-                </span>
-                <span>Updated {deck.lastModified}</span>
-              </div>
-            </div>
+          <div
+            className={`w-full h-48 bg-gradient-to-br ${deck.color} rounded-lg mb-6 flex items-center justify-center`}
+          >
+            <span className="text-6xl text-white">📚</span>
           </div>
-        </div>
+          <h1 className="text-4xl font-bold text-white mb-4">
+            {deck.title}
+          </h1>
+          <p className="text-gray-300 text-lg mb-6">
+            {deck.description}
+          </p>
 
-        {/* Action Buttons */}
-        <div className="flex gap-4 mb-8">
-          <Button
-            size="lg"
-            className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
-          >
-            Download Deck
-          </Button>
-          <Button
-            size="lg"
-            variant="outline"
-            className="text-white border-white/20 hover:bg-white/10"
-          >
-            Preview Cards
-          </Button>
-          <Button
-            size="lg"
-            variant="outline"
-            className="text-white border-white/20 hover:bg-white/10"
-          >
-            Share
-          </Button>
-        </div>
+          <div className="flex flex-wrap gap-4 text-sm text-gray-400 mb-6">
+            <span className="bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full">
+              {deck.category}
+            </span>
+            <span>By {deck.author}</span>
+            <span>⭐ {deck.rating}/5.0</span>
+            <span>{deck.cards} cards</span>
+            <span>{deck.downloads.toLocaleString()} downloads</span>
+            <span>
+              Updated {new Date(deck.updatedAt).toLocaleDateString()}
+            </span>
+          </div>
 
-        {/* Tags */}
-        <div className="mb-8">
-          <h3 className="text-lg font-semibold text-white mb-3">
-            Tags
-          </h3>
-          <div className="flex flex-wrap gap-2">
-            {deck.tags.map((tag: string) => (
+          <div className="flex flex-wrap gap-2 mb-6">
+            {deck.tags.map((tag, index) => (
               <span
-                key={tag}
-                className="bg-white/10 text-gray-300 px-3 py-1 rounded-full text-sm"
+                key={index}
+                className="bg-white/10 text-white px-2 py-1 rounded text-xs"
               >
                 #{tag}
               </span>
@@ -256,34 +209,53 @@ export default function DeckDetailPage() {
           </div>
         </div>
 
+        {/* Action Buttons */}
+        <div className="flex gap-4 mb-8">
+          <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600">
+            Download Deck
+          </Button>
+          <Button
+            variant="outline"
+            className="text-white border-white/20 hover:bg-white/10"
+          >
+            Preview Cards
+          </Button>
+          <Button
+            variant="outline"
+            className="text-white border-white/20 hover:bg-white/10"
+          >
+            Share
+          </Button>
+        </div>
+
         {/* Sample Cards */}
         <div className="mb-8">
-          <h3 className="text-2xl font-bold text-white mb-6">
+          <h2 className="text-2xl font-bold text-white mb-6">
             Sample Cards
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {deck.sampleCards.map((card, index: number) => (
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {sampleCards.map((card, index) => (
               <Card
                 key={index}
-                className="bg-white/10 backdrop-blur-sm border-white/20"
+                className="bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/15 transition-all duration-300"
               >
                 <CardHeader>
                   <CardTitle className="text-white text-lg">
                     Card {index + 1}
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <h4 className="text-sm font-medium text-gray-400 mb-2">
-                      Front
+                <CardContent>
+                  <div className="mb-4">
+                    <h4 className="text-blue-300 font-semibold mb-2">
+                      Front:
                     </h4>
                     <p className="text-white">{card.front}</p>
                   </div>
                   <div>
-                    <h4 className="text-sm font-medium text-gray-400 mb-2">
-                      Back
+                    <h4 className="text-green-300 font-semibold mb-2">
+                      Back:
                     </h4>
-                    <p className="text-gray-300">{card.back}</p>
+                    <p className="text-white">{card.back}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -291,24 +263,44 @@ export default function DeckDetailPage() {
           </div>
         </div>
 
-        {/* Reviews Section */}
-        <div className="mb-8">
-          <h3 className="text-2xl font-bold text-white mb-6">
-            Reviews
-          </h3>
-          <Card className="bg-white/10 backdrop-blur-sm border-white/20">
-            <CardContent className="p-6">
-              <div className="text-center text-gray-400">
-                <p>
-                  No reviews yet. Be the first to review this deck!
-                </p>
-                <Button className="mt-4 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600">
-                  Write a Review
-                </Button>
+        {/* Deck Stats */}
+        <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+          <CardHeader>
+            <CardTitle className="text-white">
+              Deck Statistics
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+              <div>
+                <div className="text-2xl font-bold text-white">
+                  {deck.cards}
+                </div>
+                <div className="text-gray-400 text-sm">
+                  Total Cards
+                </div>
               </div>
-            </CardContent>
-          </Card>
-        </div>
+              <div>
+                <div className="text-2xl font-bold text-white">
+                  {deck.downloads.toLocaleString()}
+                </div>
+                <div className="text-gray-400 text-sm">Downloads</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-white">
+                  {deck.rating}
+                </div>
+                <div className="text-gray-400 text-sm">Rating</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-white">
+                  {new Date(deck.createdAt).toLocaleDateString()}
+                </div>
+                <div className="text-gray-400 text-sm">Created</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
