@@ -52,7 +52,13 @@ export function PaymentModal({
       if (response.ok) {
         onSuccess();
       } else {
-        console.error("Failed to create subscription");
+        const errorData = await response.json();
+        console.error("Failed to create subscription:", errorData);
+        alert(
+          `Failed to create subscription: ${
+            errorData.error || "Unknown error"
+          }`
+        );
       }
     } catch (error) {
       console.error("Payment error:", error);

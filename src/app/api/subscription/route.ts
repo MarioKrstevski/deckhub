@@ -6,6 +6,22 @@ export async function POST(request: Request) {
   try {
     const { userId, plan, isActive } = await request.json();
 
+    // First, ensure the user exists in our database
+    const existingUser = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!existingUser) {
+      // Create user if they don't exist (this happens when they sign up via Supabase Auth)
+      await prisma.user.create({
+        data: {
+          id: userId,
+          email: "user@example.com", // We'll get this from Supabase later
+          name: "User",
+        },
+      });
+    }
+
     // Calculate end date (end of current month)
     const now = new Date();
     const endOfMonth = new Date(
@@ -28,7 +44,11 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("Error creating subscription:", error);
     return NextResponse.json(
-      { error: "Failed to create subscription" },
+      {
+        error: `Failed to create subscription: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`,
+      },
       { status: 500 }
     );
   }
