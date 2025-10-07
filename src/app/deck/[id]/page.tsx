@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   Card,
   CardContent,
@@ -30,6 +31,17 @@ interface DeckData {
 interface SampleCard {
   front: string;
   back: string;
+}
+
+interface Subscription {
+  id: string;
+  userId: string;
+  isActive: boolean;
+  plan: string;
+  startDate: string;
+  endDate: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 // Sample cards data for different deck types
@@ -76,8 +88,13 @@ const sampleCardsData: Record<string, SampleCard[]> = {
 
 export default function DeckDetailPage() {
   const params = useParams();
+  const { user } = useAuth();
   const [deck, setDeck] = useState<DeckData | null>(null);
+  const [subscription, setSubscription] =
+    useState<Subscription | null>(null);
   const [loading, setLoading] = useState(true);
+  const [subscriptionLoading, setSubscriptionLoading] =
+    useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -100,10 +117,32 @@ export default function DeckDetailPage() {
       }
     };
 
+    const fetchSubscription = async () => {
+      if (!user) {
+        setSubscriptionLoading(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `/api/subscription?userId=${user.id}`
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setSubscription(data);
+        }
+      } catch (error) {
+        console.error("Error fetching subscription:", error);
+      } finally {
+        setSubscriptionLoading(false);
+      }
+    };
+
     if (params.id) {
       fetchDeck();
     }
-  }, [params.id]);
+    fetchSubscription();
+  }, [params.id, user]);
 
   if (loading) {
     return (
@@ -195,6 +234,19 @@ export default function DeckDetailPage() {
             <span>
               Updated {new Date(deck.updatedAt).toLocaleDateString()}
             </span>
+            {!subscriptionLoading && (
+              <span
+                className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                  subscription && subscription.isActive
+                    ? "bg-green-500/20 text-green-300"
+                    : "bg-yellow-500/20 text-yellow-300"
+                }`}
+              >
+                {subscription && subscription.isActive
+                  ? "🔓 Pro Access"
+                  : "🔒 Premium Required"}
+              </span>
+            )}
           </div>
 
           <div className="flex flex-wrap gap-2 mb-6">
@@ -211,21 +263,47 @@ export default function DeckDetailPage() {
 
         {/* Action Buttons */}
         <div className="flex gap-4 mb-8">
-          <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600">
-            Download Deck
-          </Button>
-          <Button
-            variant="outline"
-            className="text-white border-white/20 hover:bg-white/10"
-          >
-            Preview Cards
-          </Button>
-          <Button
-            variant="outline"
-            className="text-white border-white/20 hover:bg-white/10"
-          >
-            Share
-          </Button>
+          {subscriptionLoading ? (
+            <div className="text-white">Loading subscription...</div>
+          ) : subscription && subscription.isActive ? (
+            <>
+              <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600">
+                Download Deck
+              </Button>
+              <Button
+                variant="outline"
+                className="text-white border-white/20 hover:bg-white/10"
+              >
+                Preview Cards
+              </Button>
+              <Button
+                variant="outline"
+                className="text-white border-white/20 hover:bg-white/10"
+              >
+                Share
+              </Button>
+            </>
+          ) : (
+            <>
+              <Link href="/profile">
+                <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600">
+                  Upgrade to Download
+                </Button>
+              </Link>
+              <Button
+                variant="outline"
+                className="text-white border-white/20 hover:bg-white/10"
+              >
+                Preview Cards
+              </Button>
+              <Button
+                variant="outline"
+                className="text-white border-white/20 hover:bg-white/10"
+              >
+                Share
+              </Button>
+            </>
+          )}
         </div>
 
         {/* Sample Cards */}

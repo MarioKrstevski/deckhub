@@ -44,19 +44,39 @@ export default function Home() {
             </span>
           </div>
           <div className="flex gap-4">
-            <Link href="/signin">
-              <Button
-                variant="outline"
-                className="text-white border-white/20 hover:bg-white/10"
-              >
-                Sign In
-              </Button>
-            </Link>
-            <Link href="/signup">
-              <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600">
-                Get Started
-              </Button>
-            </Link>
+            {user ? (
+              <>
+                <Link href="/profile">
+                  <Button
+                    variant="outline"
+                    className="text-white border-white/20 hover:bg-white/10"
+                  >
+                    Profile
+                  </Button>
+                </Link>
+                <Link href="/dashboard">
+                  <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600">
+                    Dashboard
+                  </Button>
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link href="/signin">
+                  <Button
+                    variant="outline"
+                    className="text-white border-white/20 hover:bg-white/10"
+                  >
+                    Sign In
+                  </Button>
+                </Link>
+                <Link href="/signup">
+                  <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600">
+                    Get Started
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </nav>
 

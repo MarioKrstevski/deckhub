@@ -73,12 +73,14 @@ export default function DashboardPage() {
               </span>
             </div>
             <div className="flex gap-4">
-              <Button
-                variant="outline"
-                className="text-white border-white/20 hover:bg-white/10"
-              >
-                Profile
-              </Button>
+              <Link href="/profile">
+                <Button
+                  variant="outline"
+                  className="text-white border-white/20 hover:bg-white/10"
+                >
+                  Profile
+                </Button>
+              </Link>
               <Button
                 variant="outline"
                 onClick={handleSignOut}
