@@ -16,7 +16,7 @@ export function Counter() {
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
-        <CardTitle>Counter Example</CardTitle>
+        <CardTitle>Counter Example for Mario 2</CardTitle>
         <CardDescription>
           A simple counter using Zustand for state management
         </CardDescription>

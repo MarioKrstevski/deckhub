@@ -1,75 +1,141 @@
-import { Counter } from "@/components/counter";
-import { ExampleForm } from "@/components/example-form";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-background p-8">
-      <div className="max-w-4xl mx-auto">
-        <header className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4">DeckHub</h1>
-          <p className="text-muted-foreground text-lg">
-            A Next.js project with modern tooling and best practices
+    <div
+      className="min-h-screen"
+      style={{ backgroundColor: "var(--bg1)" }}
+    >
+      <div className="container mx-auto px-4 py-16">
+        {/* Navigation */}
+        <nav className="flex justify-between items-center mb-16">
+          <div className="text-2xl font-bold text-white">
+            <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              DeckHub
+            </span>
+          </div>
+          <div className="flex gap-4">
+            <Link href="/signin">
+              <Button
+                variant="outline"
+                className="text-white border-white/20 hover:bg-white/10"
+              >
+                Sign In
+              </Button>
+            </Link>
+            <Link href="/signup">
+              <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600">
+                Get Started
+              </Button>
+            </Link>
+          </div>
+        </nav>
+
+        {/* Hero Section */}
+        <div className="text-center mb-16">
+          <h1 className="text-6xl font-bold text-white mb-6">
+            Find the Best{" "}
+            <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              Anki Decks
+            </span>
+          </h1>
+          <p className="text-xl text-gray-300 max-w-2xl mx-auto mb-8">
+            Discover high-quality Anki decks for medical studies and
+            Spanish language learning. Study smarter with proven
+            flashcards.
           </p>
-        </header>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-          <Counter />
-          <ExampleForm />
-        </div>
-
-        <div className="mb-12">
-          <div className="p-6 bg-gradient-to-br from-blue-500 to-slate-500 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-            <h3 className="text-white text-xl font-semibold mb-4">
-              Tailwind CSS{" "}
-              <span className="text-yellow-300 font-bold">
-                Styling
-              </span>
-            </h3>
-            <div className="text-white/90 leading-relaxed">
-              This component demonstrates pure Tailwind CSS styling
-              with gradients, shadows, and hover effects. The hybrid
-              approach with Stylus can be added back once we resolve
-              the Turbopack compatibility issues.
-            </div>
+          <div className="flex gap-4 justify-center">
+            <Link href="/signup">
+              <Button
+                size="lg"
+                className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+              >
+                Find Decks
+              </Button>
+            </Link>
+            <Link href="/signin">
+              <Button
+                size="lg"
+                variant="outline"
+                className="text-white border-white/20 hover:bg-white/10"
+              >
+                Sign In
+              </Button>
+            </Link>
           </div>
         </div>
 
-        <div className="text-center">
-          <h2 className="text-2xl font-semibold mb-4">Tech Stack</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-            <div className="p-4 border rounded-lg">
-              <strong>Next.js 15</strong>
-              <p className="text-muted-foreground">App Router</p>
+        {/* Features */}
+        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20 text-center">
+            <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <span className="text-2xl">🏥</span>
             </div>
-            <div className="p-4 border rounded-lg">
-              <strong>TypeScript</strong>
-              <p className="text-muted-foreground">Type Safety</p>
+            <h3 className="text-xl font-semibold text-white mb-2">
+              Medical Decks
+            </h3>
+            <p className="text-gray-300">
+              Comprehensive Anki decks for medical students covering
+              anatomy, physiology, pathology, and more.
+            </p>
+          </div>
+
+          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20 text-center">
+            <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <span className="text-2xl">🇪🇸</span>
             </div>
-            <div className="p-4 border rounded-lg">
-              <strong>Tailwind CSS</strong>
-              <p className="text-muted-foreground">Styling</p>
+            <h3 className="text-xl font-semibold text-white mb-2">
+              Spanish Learning
+            </h3>
+            <p className="text-gray-300">
+              Curated Spanish vocabulary, grammar, and conversation
+              decks for all skill levels.
+            </p>
+          </div>
+
+          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20 text-center">
+            <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <span className="text-2xl">⭐</span>
             </div>
-            <div className="p-4 border rounded-lg">
-              <strong>Shadcn UI</strong>
-              <p className="text-muted-foreground">Components</p>
+            <h3 className="text-xl font-semibold text-white mb-2">
+              Quality Rated
+            </h3>
+            <p className="text-gray-300">
+              All decks are reviewed and rated by the community to
+              ensure high-quality study materials.
+            </p>
+          </div>
+        </div>
+
+        {/* Study Stats */}
+        <div className="mt-16 bg-white/10 backdrop-blur-sm rounded-lg p-8 border border-white/20 max-w-4xl mx-auto">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-white mb-4">
+              Join Thousands of Students
+            </h2>
+            <p className="text-gray-300">
+              Already helping students achieve their learning goals
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <div>
+              <div className="text-4xl font-bold text-blue-400 mb-2">
+                500+
+              </div>
+              <div className="text-gray-300">Medical Decks</div>
             </div>
-            <div className="p-4 border rounded-lg">
-              <strong>Zustand</strong>
-              <p className="text-muted-foreground">
-                State Management
-              </p>
+            <div>
+              <div className="text-4xl font-bold text-purple-400 mb-2">
+                300+
+              </div>
+              <div className="text-gray-300">Spanish Decks</div>
             </div>
-            <div className="p-4 border rounded-lg">
-              <strong>React Hook Form</strong>
-              <p className="text-muted-foreground">Forms</p>
-            </div>
-            <div className="p-4 border rounded-lg">
-              <strong>Zod</strong>
-              <p className="text-muted-foreground">Validation</p>
-            </div>
-            <div className="p-4 border rounded-lg">
-              <strong>nuqs</strong>
-              <p className="text-muted-foreground">URL State</p>
+            <div>
+              <div className="text-4xl font-bold text-green-400 mb-2">
+                10K+
+              </div>
+              <div className="text-gray-300">Active Students</div>
             </div>
           </div>
         </div>
