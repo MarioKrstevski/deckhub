@@ -52,6 +52,13 @@ src/
 - **Styling:** Tailwind CSS utilities + CSS modules if needed
 - **Testing:** [To be defined]
 
+## 📝 **ESLint Configuration**
+
+- **Unescaped Entities:** Use `&apos;` instead of `'` in JSX text content
+- **TypeScript:** Avoid `any` type, use proper interfaces
+- **Unused Imports:** Remove unused imports to avoid warnings
+- **Build Process:** All ESLint errors must be fixed before deployment
+
 ## 🚀 **Performance Requirements**
 
 - **Load Time:** < 3 seconds

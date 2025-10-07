@@ -6,13 +6,30 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 
 // Sample deck data (in a real app, this would come from an API)
-const deckData: Record<number, any> = {
+interface DeckData {
+  id: number;
+  title: string;
+  description: string;
+  cards: number;
+  downloads: number;
+  lastModified: string;
+  color: string;
+  category: string;
+  author: string;
+  rating: number;
+  tags: string[];
+  sampleCards: Array<{
+    front: string;
+    back: string;
+  }>;
+}
+
+const deckData: Record<number, DeckData> = {
   1: {
     id: 1,
     title: "Anatomy & Physiology - Cardiovascular System",
@@ -122,7 +139,7 @@ export default function DeckDetailPage() {
               Deck Not Found
             </h1>
             <p className="text-gray-300 mb-6">
-              The deck you're looking for doesn't exist.
+              The deck you&apos;re looking for doesn&apos;t exist.
             </p>
             <Link href="/dashboard">
               <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600">
@@ -245,7 +262,7 @@ export default function DeckDetailPage() {
             Sample Cards
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {deck.sampleCards.map((card: any, index: number) => (
+            {deck.sampleCards.map((card, index: number) => (
               <Card
                 key={index}
                 className="bg-white/10 backdrop-blur-sm border-white/20"
