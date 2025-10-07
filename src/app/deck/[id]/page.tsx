@@ -267,7 +267,12 @@ export default function DeckDetailPage() {
             <div className="text-white">Loading subscription...</div>
           ) : subscription && subscription.isActive ? (
             <>
-              <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600">
+              <Button
+                className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+                onClick={() =>
+                  (window.location.href = "/decks/testdeck.apkg")
+                }
+              >
                 Download Deck
               </Button>
               <Button
